@@ -4,10 +4,10 @@ import requests, json
 
 from server.database import (
     add_water,
-    # delete_water,
+    delete_water,
     retrieve_water,
-    # retrieve_waters,
-    # update_water,
+    retrieve_waters,
+    update_water,
 )
 from server.models.water import (
     ErrorResponseModel,
@@ -24,12 +24,12 @@ async def add_water_data(water: WaterSchema = Body(...)):
     new_water = await add_water(water)
     return ResponseModel(new_water, "Water added successfully.")
 
-# @router.get("/", response_description="Waters retrieved")
-# async def get_waters():
-#     waters = await retrieve_waters()
-#     if waters:
-#         return ResponseModel(waters, "Waters data retrieved successfully")
-#     return ResponseModel(waters, "Empty list returned")
+@router.get("/", response_description="Waters retrieved")
+async def get_waters():
+    waters = await retrieve_waters()
+    if waters:
+        return ResponseModel(waters, "Waters data retrieved successfully")
+    return ResponseModel(waters, "Empty list returned")
 
 
 @router.get("/{id}", response_description="Water data retrieved")
