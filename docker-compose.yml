@@ -1,17 +1,19 @@
 version: '3'
 
 services:
-  web:
-    image: myfastapi
-    container_name: fastapi
-    env_file:
-      - .env
-    volumes:
-      - ./fastapi/app:/code/app
-    ports:
-      - "8000:8000"
-    depends_on:
-      - mongodb
+  # web:
+    # image: myfastapi
+    # container_name: fastapi
+    # env_file:
+    #   - .env
+    # volumes:
+    #   - ./fastapi/app:/code/app
+    # ports:
+    #   - "8000:8000"
+    # depends_on:
+    #   - mongodb
+    # networks:
+    #   - coffeeNet
 
   mongodb:
     image: mongo:latest
@@ -21,11 +23,13 @@ services:
     volumes:
       - ./mongodb:/data/db
     ports:
-      - "27018:27017"
+      - "27017:27017"
     environment:
       - "MONGO_INITDB_DATABASE=${MONGO_DB}"
       - "MONGO_INITDB_ROOT_USERNAME=${MONGO_USER}"
       - "MONGO_INITDB_ROOT_PASSWORD=${MONGO_PASS}"
+    networks:
+      - coffeeNet
   
   streamlit:
     image: mystreamlit
@@ -37,6 +41,8 @@ services:
       - "8501:8501"
     depends_on:
       - mongodb
+    networks:
+      - coffeeNet
 
 networks:
   coffeeNet:
