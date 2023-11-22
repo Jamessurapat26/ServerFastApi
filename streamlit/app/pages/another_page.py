@@ -1,13 +1,14 @@
 import streamlit as st
 import pandas as pd
 import pymongo
+from datetime import date
 
 MONGO_DETAILS = "mongodb://TGR_GROUP16:ED370J@mongodb:27017"
 
 st.set_page_config(
-    page_title = "House Rent Dashboard",
+    page_title = "ข้อมูลระดับน้ำ",
     page_icon = ":bar_chart:",
-    layout = "wide"
+    layout="centered"
 )
 
 @st.cache_resource
@@ -20,52 +21,73 @@ client = init_connection()
 def get_data():
      db = client.mockupdata
      data = db.waterdata.find()
-     df = pd.DataFrame(data = data, columns = ["Name", "Date", "Month", "Year", "waterDataFront", "WaterDataBack", "WaterDrainRate"])
+     send_data = list(data)
+     df = []
+    #  temp_df = pd.DataFrame(data = data, columns = ["Name", "Date", "Month", "Year", "WaterDataFront", "WaterDataBack", "WaterDrainRate"])
+     for temp_data in send_data:
+          fulldate = date(temp_data["Year"], temp_data["Month"], temp_data["Date"])
+          data = {
+               "Name": temp_data["Name"],
+               "Fulldate": date(temp_data["Year"], temp_data["Month"], temp_data["Date"]),
+               "Date": fulldate.day,
+               "Month": fulldate.month,
+               "Year": fulldate.year,
+               "WaterDataFront": float(temp_data["WaterDataFront"]),
+               "WaterDataBack": float(temp_data["WaterDataBack"]),
+               "WaterDrainRate": float(temp_data["WaterDrainRate"]),
+
+          }
+          df.append(data)
+     print(df)
      return df
 
-st.markdown("# Another page bite the dust")
-st.sidebar.markdown("* Another page")
+st.title("ข้อมูลระดับน้ำ")
+st.sidebar.markdown("* Water data")
 
-df = get_data()
-st.dataframe(df) 
+df = pd.DataFrame(data = get_data())
 
-st.button("calculate", key = "calculate")
-st.divider()
+month_list = {
+     "มกราคม": 1,
+     "กุมภาพันธ์": 2,
+     "มีนาคม": 3,
+     "เมษายน": 4,
+     "พฤษภาคม": 5,
+     "มิถุนายน": 6,
+     "กรกฎาคม": 7,
+     "สิงหาคม": 8,
+     "กันยายน": 9,
+     "ตุลาคม": 10,
+     "พฤศจิกายน": 11,
+     "ธันวาคม": 12
+}
+
+year_list = range(2016, 2024)
+
+
+st.subheader("กรุณาเลือกเดือนและปีที่ต้องการดูข้อมูล")
+selected_month = st.selectbox("ปี", options = month_list)
+selected_year = st.selectbox("ปี", options = year_list )
+
+temp = df.loc[(df['Month'] == month_list[selected_month]) & (df['Year'] == selected_year)]
+max_WDF = temp.sort_values('WaterDataFront', ascending=False).head(1)
+max_WDB = temp.sort_values('WaterDataBack', ascending=False).head(1)
+
+col1, col2 = st.columns(2)
+col1.metric("ระดับน้ำสูงสุดบริเวณหน้าเขื่อน", value = max_WDF['WaterDataFront'])
+col2.metric("ระดับน้ำสูงสุดบริเวณหลังเขื่อน", value = max_WDB['WaterDataBack'])
 
 left_column, right_column = st.columns(2)
 
 with left_column:
-    left_cal_container = st.empty()
+    st.write("ระดับน้ำบริเวณหน้าเขื่อน")
+    st.bar_chart(data = df.loc[(df['Month'] == month_list[selected_month]) & (df['Year'] == selected_year)], x = 'Date', y = "WaterDataFront", color = "#41AAA8")
 
 with right_column:
-        right_cal_container = st.empty()
+    st.write("ระดับน้ำบริเวณหลังเขื่อน")
+    st.bar_chart   (data = df.loc[(df['Month'] == month_list[selected_month]) & (df['Year'] == selected_year)], x = 'Date', y = "WaterDataBack", color = "#41AAA8")
 
-if (st.session_state.calculate):
-    avg_rent = round(df['Rent'].mean(), 1)
-    st.write("Average rent is ", str(avg_rent))
+st.write("อัตราการระบายน้ำ")
+st.line_chart(data = df.loc[(df['Month'] == month_list[selected_month]) & (df['Year'] == selected_year)], x = 'Date', y = "WaterDrainRate", color = "#41AAA8")
 
-if (st.session_state.calculate):
-    avg_size = round(df['Size'].mean(), 2)
-    st.write("Average size is", str(avg_size))
-
-if (st.session_state.calculate):
-     st.divider()
-
-choice_column, display_column = st.columns(2)
-with choice_column:         
-    st.button("area chart", key = "area_chart")
-    st.button("bar chart", key = "bar_chart")
-    st.button("line chart", key = "line_chart")
-    
-with display_column:
-    container = st.empty()
-    container.text("Select kind of Chart you would like to see")
-         
-         
-if (st.session_state.area_chart):
-    container.area_chart(data = df, x = "Size", y = "Rent")
-elif (st.session_state.bar_chart):
-    container.bar_chart(data = df, x = "Size", y = "Rent")
-elif (st.session_state.line_chart):
-    container.line_chart(data = df, x = "Size", y = "Rent")
-
+st.subheader("ข้อมูลน้ำทั้งหมด")
+st.dataframe(df[['Name', 'Fulldate', 'WaterDataFront', 'WaterDataBack', 'WaterDrainRate']], use_container_width = True, hide_index = True)
