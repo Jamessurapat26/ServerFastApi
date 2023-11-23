@@ -1,9 +1,9 @@
 [theme]
-primaryColor="lightgrey" 
-backgroundColor="whitesmoke" 
-secondaryBackgroundColor="white"
-textColor="black" 
-font="serif"
+primaryColor="#577d86"
+backgroundColor="#87cbb9"
+secondaryBackgroundColor="#569daa"
+textColor="#ffffff"
+
 
 [server]
 headless = true

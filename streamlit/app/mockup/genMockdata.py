@@ -2,7 +2,7 @@ from pymongo import MongoClient
 import random
 
 class MongoDB(object):
-    def __init__(self, host='localhost', port=27018, database_name="mockupdata", collection_name="waterdata"):
+    def __init__(self, host='localhost', port=27017, database_name="mockupdata", collection_name="waterdata"):
         try:
             self._connection = MongoClient(username="TGR_GROUP16", password="ED370J", host=host, port=port, maxPoolSize=200)
         except Exception as error:
