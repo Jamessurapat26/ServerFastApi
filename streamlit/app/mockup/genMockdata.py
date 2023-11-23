@@ -39,3 +39,6 @@ for year in range(2016,2024,1):
 for collection in data_list:
     print('[!] Inserting - ', collection)
     mongo_db.insert(collection)
+
+
+# test
