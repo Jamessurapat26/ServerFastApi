@@ -3,6 +3,21 @@ import pandas as pd
 import pymongo
 from datetime import date
 
+import json
+import http.client
+
+conn = http.client.HTTPConnection("localhost:9910") 
+headers = { "Content-Type": "application/json"}
+body = json.dumps({"nargout": 1, "rhs" : [5]})
+conn.request("POST", "/mymagic/mymagic", body, headers)
+response = conn.getresponse()
+if response.status == 200:
+   result = json.loads(response.read())
+   if "lhs" in result:
+     print("Result of magic(5) is " + str(result["lhs"][0]["mwdata"]))
+   elif "error" in result:
+     print("Error: " + str(result["error"]["message"]))
+
 MONGO_DETAILS = "mongodb://TGR_GROUP16:ED370J@mongodb:27017"
 
 st.set_page_config(
@@ -10,6 +25,8 @@ st.set_page_config(
     page_icon = ":bar_chart:",
     layout="centered"
 )
+
+st.button()
 
 @st.cache_resource
 def init_connection():
