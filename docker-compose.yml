@@ -1,19 +1,19 @@
 version: '3'
 
 services:
-  # web:
-    # image: myfastapi
-    # container_name: fastapi
-    # env_file:
-    #   - .env
-    # volumes:
-    #   - ./fastapi/app:/code/app
-    # ports:
-    #   - "8000:8000"
-    # depends_on:
-    #   - mongodb
-    # networks:
-    #   - coffeeNet
+  web:
+    image: myfastapi
+    container_name: fastapi
+    env_file:
+      - .env
+    volumes:
+      - ./fastapi/app:/code/app
+    ports:
+      - "8000:8000"
+    depends_on:
+      - mongodb
+    networks:
+      - coffeeNet
 
   mongodb:
     image: mongo:latest
