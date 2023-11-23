@@ -3,6 +3,7 @@ primaryColor="#577d86"
 backgroundColor="#87cbb9"
 secondaryBackgroundColor="#569daa"
 textColor="#ffffff"
+font="serif"
 
 
 [server]
