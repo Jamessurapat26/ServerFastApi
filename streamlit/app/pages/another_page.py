@@ -65,7 +65,7 @@ year_list = range(2016, 2024)
 
 
 st.subheader("กรุณาเลือกเดือนและปีที่ต้องการดูข้อมูล")
-selected_month = st.selectbox("ปี", options = month_list)
+selected_month = st.selectbox("เดือน", options = month_list)
 selected_year = st.selectbox("ปี", options = year_list )
 
 temp = df.loc[(df['Month'] == month_list[selected_month]) & (df['Year'] == selected_year)]
