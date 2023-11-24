@@ -1,8 +1,8 @@
 from pymongo import MongoClient
-import random
+import pandas as pd
 
 class MongoDB(object):
-    def __init__(self, host='localhost', port=27017, database_name="mockupdata", collection_name="waterdata"):
+    def __init__(self, host='localhost', port=27017, database_name="mockupdata", collection_name="Q1A"):
         try:
             self._connection = MongoClient(username="TGR_GROUP16", password="ED370J", host=host, port=port, maxPoolSize=200)
         except Exception as error:
@@ -22,19 +22,9 @@ class MongoDB(object):
 print('[*] Pushing data to MongoDB ')
 mongo_db = MongoDB()
 
-# total days in every month during non leap years
-M_DAYS = [0, 32, 29, 32, 31, 32, 31, 32, 32, 31, 32, 31, 32]
-
-def isleap(year):
-    """Return True for leap years, False for non-leap years."""
-    return year % 4 == 0 and (year % 100 != 0 or year % 400 == 0)
-data_list = list()
-for year in range(2016,2024,1):
-    for month in range(1,13,1):
-        for date in range(1,M_DAYS[month],1):
-            data_list.append({'Name':'Huana','Date':date,'Month':month,'Year':year,'WaterDataFront':random.randrange(100,200,1),'WaterDataBack':random.randrange(90,180,1),'WaterDrainRate':random.randrange(90,150,2)})
-        if month==2 and isleap(year):
-            data_list.append({'Name':'Huana','Date':29,'Month':month,'Year':year,'WaterDataFront':random.randrange(100,200,1),'WaterDataBack':random.randrange(90,180,1),'WaterDrainRate':random.randrange(90,150,2)})
+csv_df = pd.read_csv("E:/extra/TGR2023/ServerFastApi/streamlit/app/mockup/Q1A.csv")
+df = pd.DataFrame(data = csv_df)
+data_list = df.to_dict('records')
 
 for collection in data_list:
     print('[!] Inserting - ', collection)
