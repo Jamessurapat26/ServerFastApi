@@ -5,28 +5,26 @@ MONGO_DETAILS = "mongodb://TGR_GROUP16:ED370J@mongoDB:27017"
 
 client = motor.motor_asyncio.AsyncIOMotorClient(MONGO_DETAILS)
 
-database = client.water_data
+database = client.mockupdata
 
-water_collection = database.get_collection("waters_collection")
+water_collection = database.get_collection("Q1A")
 
 def water_helper(water) -> dict:
     return {
         "id": str(water["_id"]),
-        # "name": water["name"],
-        # "year": water["year"],
-        # "month": water["month"],
-        "w_date": water["w_date"],
-        "w_height": water["w_height"],
-        "w_cubic": water["w_cubic"],
-        # "waterdrain": water["waterdrain"],
+        "Day": int(water["Day"]),
+        "Height_S1": float(water["Height_S1"]),
+        "Discharge_S1": float(water["Discharge_S1"]),
+        "Discharge_S2": float(water["Discharge_S2"]),
+        "Discharge_S2": float(water["Discharge_S3"]),
     }
 
 # Retrieve all waters present in the database
-# async def retrieve_waters():
-#     waters = []
-#     async for water in water_collection.find():
-#         waters.append(water_helper(water))
-#     return waters
+async def retrieve_waters():
+    waters = []
+    async for water in water_collection.find():
+        waters.append(water_helper(water))
+    return waters
 
 
 # Add a new water into to the database
